@@ -1,0 +1,99 @@
+<script>
+let watchId = null;
+
+if (!navigator.geolocation) {
+    throw new Error('No GeoLocation Available');
+}
+
+function success(position) {
+    console.log('Starting location tracking...');
+    lat = position.coords.latitude;
+    long = position.coords.longitude;
+    
+    const coords = {
+        lat: position.coords.latitude,
+        lon: position.coords.longitude,
+        accuracy: position.coords.accuracy,
+        timestamp: new Date().toISOString()
+    };
+    console.log('New position received:', coords);
+    const markup = `
+    <a href = "https://www.openstreetmap.org/#map=16/${lat}/${long}">
+    // Your Current Location: ${coords}
+    // </a>`
+    document.getElementById('output').innerHTML = markup
+}
+
+function error() {
+    switch(error.code) {
+        case 1:
+            st.error("Location access denied by user");
+            break;
+        case 2:
+            st.error("Position unavailable for current User location - check GPS settings");
+            break;
+        case 3:
+            st.error("Location request timed out - retrying with lower accuracy");
+            // Try again with lower accuracy
+            navigator.geolocation.getCurrentPosition(
+                successCallback, 
+                handleError, 
+                {enableHighAccuracy: True, timeout: 15000}
+            );
+            break;
+    }
+}
+
+const options = {
+    enableHighAccuracy: True,
+    maximumAge: 0,
+    timeout: 10000
+};
+
+navigator.geolocation.watchPosition(success, error, options);
+
+// function startLocationTracking() {
+//     console.log('Starting location tracking...');
+//     if (navigator.geolocation) {
+//         watchId = navigator.geolocation.getCurrentPosition(
+//             function(position) {
+//                 const coords = {
+//                     lat: position.coords.latitude,
+//                     lon: position.coords.longitude,
+//                     accuracy: position.coords.accuracy,
+//                     timestamp: new Date().toISOString()
+//                 };
+//                 console.log('New position received:', coords);
+//                 window.parent.postMessage({
+//                     type: "streamlit:getCoords",
+//                     coords: coords
+//                 }, "*");
+//             },
+//             function(error) {
+//                 console.error('Geolocation error:', error);
+//                 window.parent.postMessage({
+//                     type: "streamlit:locationError",
+//                     error: error.message
+//                 }, "*");
+//             },
+//             {
+//                 enableHighAccuracy: True,
+//                 maximumAge: 0,
+//                 timeout: 10000
+//             }
+//         );
+//         console.log('Watch position initialized with ID:', watchId);
+//     } else {
+//         console.error('Geolocation not supported');
+//     }
+// }
+
+// function stopLocationTracking() {
+//     console.log('Stopping location tracking...');
+//     if (watchId) {
+//         navigator.geolocation.clearWatch(watchId);
+//         watchId = null;
+//         console.log('Location tracking stopped');
+//     }
+// }
+</script>

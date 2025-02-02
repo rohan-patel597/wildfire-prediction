@@ -1,2 +1,5 @@
 .wildfireenv
 __pycache__
+.vscode
+logs
+app.ipynb

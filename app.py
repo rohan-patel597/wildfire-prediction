@@ -6,6 +6,7 @@ import requests
 import streamlit as st
 import plotly.express as px
 from prediction import predict_risk
+from map_risk import create_map  
 
 st.title("California Wildfire Housing Damage Risk Predictor")
 
@@ -128,6 +129,10 @@ if predict_button:
     # Make prediction
     result = predict_risk(user_input)
 
+    # Display the map
+    st.subheader("Location Map")
+    map_figure = create_map(city, county, community, result['probabilities'])
+    st.plotly_chart(map_figure)
     # # Display results
     # st.subheader("Prediction Results")
     # st.write(f"Predicted Risk Class: **{result['predicted_risk']}**")
@@ -151,7 +156,17 @@ if predict_button:
         text=values
     )
     fig.update_traces(texttemplate='%{text:.1%}', textposition='outside')  # Show percentages on bars
-    fig.update_layout(yaxis=dict(range=[0, 1]))  # Set y-axis range to [0, 1]
+    fig.update_layout(
+    yaxis=dict(
+            range=[0, 1.1],               # Explicitly set y-axis range from 0 to 1
+            tickvals=[i/10 for i in range(11)],  # Add ticks at 0.1, 0.2, ..., 1.0
+            tickformat=".1f"            # Format the ticks as decimal values (e.g., 0.1)
+    ),
+    xaxis_title="Risk Categories",
+        yaxis_title="Probability"
+    )
+
+    # fig.update_layout(yaxis=dict(range=[0, 1]))  # Set y-axis range to [0, 1]
 
     # Display the plot in Streamlit
     st.plotly_chart(fig)
