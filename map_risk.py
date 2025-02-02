@@ -9,7 +9,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('wildfire_map.log'),  # Log to file
+        logging.FileHandler('logs/Logwildfire_map.log'),  # Log to file
         logging.StreamHandler()  # Log to console
     ]
 )
