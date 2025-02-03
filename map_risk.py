@@ -3,17 +3,29 @@ import pandas as pd
 import requests
 import urllib.parse
 import logging
+import os 
+
+log_dir = 'logs'
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
 
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('logs/Logwildfire_map.log'),  # Log to file
-        logging.StreamHandler()  # Log to console
+        logging.StreamHandler()  # Always log to console
     ]
 )
+
+# Add file handler after creating directory
 logger = logging.getLogger(__name__)
+try:
+    file_handler = logging.FileHandler(os.path.join(log_dir, 'Logwildfire_map.log'))
+    file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+    logger.addHandler(file_handler)
+except Exception as e:
+    logger.warning(f"Could not set up file logging: {e}")
 
 def create_map(city, county, community, risk_probabilities):
     try:
