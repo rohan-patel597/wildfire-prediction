@@ -3,3 +3,4 @@ __pycache__
 .vscode
 logs
 app.ipynb
+requirements2.txt
